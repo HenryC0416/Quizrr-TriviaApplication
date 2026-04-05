@@ -24,8 +24,7 @@ app.get("/questions", async (req, res) => {
     const formattedQuestions = data.map((q, index) => ({
       id: index,
       question: q.question,
-      choices: [...q.incorrectAnswers, q.correctAnswer]
-        .sort(() => Math.random() - 0.5),
+      choices: shuffleChoices([...q.incorrectAnswers, q.correctAnswer]),
       answer: q.correctAnswer,
     }));
 
@@ -35,6 +34,9 @@ app.get("/questions", async (req, res) => {
   }
 });
 
+function shuffleChoices(choices) {
+  return choices.sort(() => Math.random() - 0.5);
+}
 app.listen(3001, () => {
   console.log("Server running on http://localhost:3001");
 });
