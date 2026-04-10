@@ -22,7 +22,7 @@ export default function Quiz() {
   // Sets Countdown timer
   useEffect(() => {
     if (selected) return;
-      const timer = setInterval(() => {
+    const timer = setInterval(() => {
       setTime(t => t-1);
     },1000);
     return () => clearInterval(timer);
@@ -56,26 +56,41 @@ export default function Quiz() {
       setTime(10); 
     }, 1000);
   };
+  const handleRestart = () => {
+    setCurrentIndex(0);
+    setScore(0);
+    setSelected(null);
+    setTime(10);
+  };
+ if (currentIndex >= questions.length) {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="bg-white p-6 rounded-xl shadow-md text-center">
 
-  if (currentIndex >= questions.length) {
-    return (
-      <div>
-        <h2>Quiz Finished!</h2>
-        <p>Your score: {score} / {questions.length}</p>
+        <h2 className="text-2xl font-bold mb-4">Quiz Finished!</h2>
 
-        <button onClick={() => navigate("/")}>Home Page</button>
-        <br /><br />
+        <p className="mb-4 text-lg">
+          Your score: {score} / {questions.length}
+        </p>
 
-        <button onClick={() => {
-            setCurrentIndex(0);
-            setScore(0);
-            setSelected(null);
-            setTime(10);
-        }}> Play Again
+        <button
+          onClick={handleRestart}
+          className="bg-blue-500 text-white px-4 py-2 rounded mr-2 hover:bg-blue-600"
+        >
+          Play Again
         </button>
+
+        <button
+          onClick={() => navigate("/")}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Home
+        </button>
+
       </div>
-    );
-  }
+    </div>
+  );
+}
 
 
   const getButtonColor = (choice) => {
@@ -86,27 +101,27 @@ export default function Quiz() {
   };
 
   return (
-    <div>
-      <h2>Question {currentIndex + 1}</h2>
-      <p>{currentQuestion.question}</p>
-      <p>Time left: {time}</p>
-      {currentQuestion.choices.map(choice => (
-        <button
-          disabled={selected !== null}
-          key={choice}
-          onClick={() => handleAnswer(choice)}
-          style={{
-            display: "block",
-            margin: "10px",
-            padding: "10px",
-            backgroundColor: getButtonColor(choice),
-          }}
-        >
-          {choice}
-        </button>
-      ))}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <div className="bg-white p-6 rounded-xl shadow-md w-96">
+        <h2 className="text-xl font-bold mb-2" >Question {currentIndex + 1}</h2>
+        <p className="mb-4">{currentQuestion.question}</p>
+        <p className="mb-2 font-semibold">Time left: {time} Seconds</p>
+        {currentQuestion.choices.map(choice => (
+          <button
+            disabled={selected !== null}
+            key={choice}
+            onClick={() => handleAnswer(choice)}
+             className={`w-full p-2 mb-2 rounded border transition 
+              ${getButtonColor(choice) === "green" ? "bg-green-400" : ""}
+              ${getButtonColor(choice) === "red" ? "bg-red-400" : ""}
+              ${getButtonColor(choice) === "white" ? "bg-gray-100 hover:bg-gray-200" : ""}
+             `}>
+            {choice}
+          </button>
+        ))}
 
-      <p>Score: {score}</p>
+        <p className="mt-4 font-semibold">Score: {score}</p>
+      </div>
     </div>
   );
 }

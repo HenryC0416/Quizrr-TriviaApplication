@@ -23,18 +23,27 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <h1>Welcome to Quizrr!</h1>
-      <label htmlFor="category">Select a category:</label>
-      <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-        {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
-      <br /><br />
-       <button onClick={startQuiz}>Start Quiz</button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h1 className="text-4xl font-bold mb-6">Welcome to Quizrr!</h1>
+      <div className="bg-white p-6 rounded-xl shadow-md">
+        <label className="block mb-2 font-semibold">Select Category:</label>
+
+        <select value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full p-2 border rounded mb-4" 
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+
+        <button onClick={startQuiz}
+          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+          Start Quiz
+        </button>
     </div>
-  );
+  </div>
+);
 }
