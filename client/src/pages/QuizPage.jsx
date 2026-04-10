@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 export default function Quiz() {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,10 +10,10 @@ export default function Quiz() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const category = params.get("category");
-
+  const navigate = useNavigate();
   // Fetches Questions from server
   useEffect(() => {
-    fetch("http://localhost:3001/questions?category=${category}")
+    fetch(`http://localhost:3001/questions?category=${category}`)
       .then(res => res.json())
       .then(data => setQuestions(data))
       .catch(err => console.error(err));
@@ -62,6 +62,17 @@ export default function Quiz() {
       <div>
         <h2>Quiz Finished!</h2>
         <p>Your score: {score} / {questions.length}</p>
+
+        <button onClick={() => navigate("/")}>Home Page</button>
+        <br /><br />
+
+        <button onClick={() => {
+            setCurrentIndex(0);
+            setScore(0);
+            setSelected(null);
+            setTime(10);
+        }}> Play Again
+        </button>
       </div>
     );
   }

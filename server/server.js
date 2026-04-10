@@ -14,10 +14,10 @@ app.get("/", (req, res) => {
 app.get("/questions", async (req, res) => {
   try {
     const category = req.query.category;
-    let url = "https://the-trivia-api.com/api/questions?limit=10";
-    if (category) {
-      url = `https://the-trivia-api.com/api/questions?categories=${category}&limit=10`;
-    }
+    
+    
+    url = `https://the-trivia-api.com/api/questions?categories=${category}&limit=10`;
+  
     const response = await fetch(url);
     const data = await response.json();
 
