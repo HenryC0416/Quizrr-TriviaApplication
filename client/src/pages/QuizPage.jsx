@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate} from "react-router-dom";
+import QuestionCard from "../components/QuestionCard";
+import AnswerButton from "../components/AnswerButtons";
+import { fetchQuestions } from "../services/api";
+import FinishScreen from "../components/FinishScreen";
+
 export default function Quiz() {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -11,13 +16,13 @@ export default function Quiz() {
   const params = new URLSearchParams(location.search);
   const category = params.get("category");
   const navigate = useNavigate();
-  // Fetches Questions from server
+ 
   useEffect(() => {
-    fetch(`http://localhost:3001/questions?category=${category}`)
-      .then(res => res.json())
-      .then(data => setQuestions(data))
-      .catch(err => console.error(err));
+    fetchQuestions(category)
+      .then(setQuestions)
+      .catch(console.error);
   }, [category]);
+
 
   // Sets Countdown timer
   useEffect(() => {
@@ -62,35 +67,7 @@ export default function Quiz() {
     setSelected(null);
     setTime(10);
   };
- if (currentIndex >= questions.length) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="bg-white p-6 rounded-xl shadow-md text-center">
-
-        <h2 className="text-2xl font-bold mb-4">Quiz Finished!</h2>
-
-        <p className="mb-4 text-lg">
-          Your score: {score} / {questions.length}
-        </p>
-
-        <button
-          onClick={handleRestart}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2 hover:bg-blue-600"
-        >
-          Play Again
-        </button>
-
-        <button
-          onClick={() => navigate("/")}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-        >
-          Home
-        </button>
-
-      </div>
-    </div>
-  );
-}
+ 
 
 
   const getButtonColor = (choice) => {
@@ -100,28 +77,38 @@ export default function Quiz() {
     return "white";
   };
 
+  if (currentIndex >= questions.length) {
+    return (
+      <FinishScreen
+        score={score}
+        total={questions.length}
+        onRestart={handleRestart}
+        onHome={() => navigate("/")}
+      />
+    );
+  }
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-xl shadow-md w-96">
         <h2 className="text-xl font-bold mb-2" >Question {currentIndex + 1}</h2>
         <p className="mb-4">{currentQuestion.question}</p>
         <p className="mb-2 font-semibold">Time left: {time} Seconds</p>
-        {currentQuestion.choices.map(choice => (
-          <button
-            disabled={selected !== null}
-            key={choice}
-            onClick={() => handleAnswer(choice)}
-             className={`w-full p-2 mb-2 rounded border transition 
-              ${getButtonColor(choice) === "green" ? "bg-green-400" : ""}
-              ${getButtonColor(choice) === "red" ? "bg-red-400" : ""}
-              ${getButtonColor(choice) === "white" ? "bg-gray-100 hover:bg-gray-200" : ""}
-             `}>
-            {choice}
-          </button>
-        ))}
+        <QuestionCard question = {currentQuestion.question}>
+          {currentQuestion.choices.map(choice => (
+            <AnswerButton
+              key={choice}
+              choice={choice}
+              onClick={() => handleAnswer(choice)}
+              disabled={selected !== null}
+              color={getButtonColor(choice)}
+            />
+          ))}
+        </QuestionCard>
 
         <p className="mt-4 font-semibold">Score: {score}</p>
       </div>
     </div>
   );
+
+  
 }
