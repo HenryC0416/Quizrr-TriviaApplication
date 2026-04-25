@@ -93,7 +93,7 @@ export default function Quiz() {
         <h2 className="text-xl font-bold mb-2" >Question {currentIndex + 1}</h2>
         <p className="mb-4">{currentQuestion.question}</p>
         <p className="mb-2 font-semibold">Time left: {time} Seconds</p>
-        <QuestionCard question = {currentQuestion.question}>
+        <QuestionCard >
           {currentQuestion.choices.map(choice => (
             <AnswerButton
               key={choice}
