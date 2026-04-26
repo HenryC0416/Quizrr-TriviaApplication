@@ -29,7 +29,5 @@ node_modules/
 
 # environment
 .env
-/generated/prisma
+server/generated/prisma
 
-# prisma config
-prisma.config.ts

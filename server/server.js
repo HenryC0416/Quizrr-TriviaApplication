@@ -1,11 +1,12 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
+import routes from "./routes/index.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+app.use("/", routes);
 app.get("/", (req, res) => {
   res.send("Quizrr backend is running!");
 });
@@ -16,7 +17,7 @@ app.get("/questions", async (req, res) => {
     const category = req.query.category;
     
     
-    url = `https://the-trivia-api.com/api/questions?categories=${category}&limit=10`;
+    const url = `https://the-trivia-api.com/api/questions?categories=${category}&limit=10`;
   
     const response = await fetch(url);
     const data = await response.json();
