@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Register() {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,15 +11,20 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
 
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:3001/auth/login", {
+      const res = await fetch("http://localhost:3001/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
       });
 
       const data = await res.json();
@@ -27,10 +33,11 @@ export default function Login() {
         setError(data.error);
         return;
       }
-
+      
       navigate("/");
+      console.log(data);
     } catch (err) {
-      setError(err.message);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -41,30 +48,33 @@ export default function Login() {
         ? "border-red-500 focus:ring-red-500"
         : "border-gray-300 focus:ring-indigo-500"
     } focus:outline-none focus:ring-2`;
-    
+
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
       <div className="w-[350px] p-8 bg-white rounded-2xl shadow-lg">
         <h2 className="text-center text-2xl font-semibold mb-5">
-          Welcome Back
+          Create Account
         </h2>
 
-        
         {error && (
           <p className="text-red-500 text-sm mb-3 text-center">
             {error}
           </p>  
         )}
-
+        
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          <input
+            className={displayError()}
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+
           <input
             className={displayError()}
             placeholder="Email"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setError(""); 
-            }}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
@@ -72,29 +82,16 @@ export default function Login() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setError(""); 
-            }}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button
-            className="p-2 rounded-lg bg-green-600 text-white mt-2 hover:bg-green-700 transition disabled:opacity-50"
+            className="p-2 rounded-lg bg-indigo-600 text-white mt-2 hover:bg-indigo-700 transition disabled:opacity-50"
             disabled={loading}
           >
-            {"Login"}
+            {loading ? "Creating account..." : "Register"}
           </button>
         </form>
-
-        <p className="mt-4 text-sm text-center">
-          Don’t have an account?{" "}
-          <span
-            className="text-indigo-600 cursor-pointer underline"
-            onClick={() => navigate("/register")}
-          >
-            Register
-          </span>
-        </p>
       </div>
     </div>
   );
