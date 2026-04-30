@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import routes from "./routes/index.js";
-
+import scoreRoutes from "./routes/scoreRoutes.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/scores", scoreRoutes);
 app.use("/", routes);
 app.get("/", (req, res) => {
   res.send("Quizrr backend is running!");

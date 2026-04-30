@@ -29,6 +29,8 @@ export default function Login() {
       }
 
       navigate("/");
+      localStorage.setItem("user", JSON.stringify(data.user));
+      const user = JSON.parse(localStorage.getItem("user"));
     } catch (err) {
       setError(err.message);
     } finally {

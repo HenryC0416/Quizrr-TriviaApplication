@@ -11,12 +11,16 @@ export default function Quiz() {
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState(null);
   const [time, setTime] = useState(10);
+  const [saved, setSaved] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const navigate = useNavigate();
+  
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const category = params.get("category");
-  const navigate = useNavigate();
- 
+  
   useEffect(() => {
     fetchQuestions(category)
       .then(setQuestions)
@@ -35,12 +39,9 @@ export default function Quiz() {
   // Moves to next questions when timer runs out
   useEffect(() => {
     if (time === 0) {
-      setCurrentIndex(prev => prev + 1);
-      setTimeout(() => {
       setSelected(null);
       setCurrentIndex(prev => prev + 1);
       setTime(10); 
-  }, 1000);
     }
   }, [time]);
 
@@ -77,6 +78,38 @@ export default function Quiz() {
     return "white";
   };
 
+  const quizFinished = currentIndex >= questions.length;
+
+  useEffect(() => {
+    if (!quizFinished || !user || saved) return;
+
+    const saveScore = async () => {
+      try {
+        setSaved(true);
+
+        const res = await fetch("http://localhost:3001/scores", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            category,
+            value: score,
+          }),
+        });
+
+        const data = await res.json();
+        
+      } catch (err) {
+        console.error("Failed to save score:", err);
+      }
+    };
+
+    saveScore();
+
+  }, [quizFinished, user, saved, category, score]);
+
   if (currentIndex >= questions.length) {
     return (
       <FinishScreen
@@ -87,6 +120,11 @@ export default function Quiz() {
       />
     );
   }
+
+  if (!questions.length) {
+  return <div className="text-center mt-10">Loading questions...</div>;
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-xl shadow-md w-96">
