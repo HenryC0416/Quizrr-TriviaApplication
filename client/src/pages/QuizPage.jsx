@@ -78,7 +78,7 @@ export default function Quiz() {
     return "white";
   };
 
-  const quizFinished = currentIndex >= questions.length;
+ const quizFinished = currentIndex >= questions.length && questions.length > 0;
 
   useEffect(() => {
     if (!quizFinished || !user || saved) return;
