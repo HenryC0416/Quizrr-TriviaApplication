@@ -1,30 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState();
+
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
 
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:3001/auth/register", {
+    
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await res.json();
@@ -33,20 +34,30 @@ export default function Register() {
         setError(data.error);
         return;
       }
-      
+
+     
+      const loginRes = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const loginData = await loginRes.json();
+
+      if (loginRes.ok) {
+        login(loginData.token, loginData.user);
+      }
+
       navigate("/");
-      console.log(data);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
-  const displayError = () =>
+  const displayError = (hasError) =>
     `p-2 rounded-lg border ${
-      error 
-        ? "border-red-500 focus:ring-red-500"
-        : "border-gray-300 focus:ring-indigo-500"
+      hasError ? "border-red-500 focus:ring-red-500": "border-gray-300 focus:ring-indigo-500"
     } focus:outline-none focus:ring-2`;
 
   return (
@@ -59,22 +70,29 @@ export default function Register() {
         {error && (
           <p className="text-red-500 text-sm mb-3 text-center">
             {error}
-          </p>  
+          </p>
         )}
-        
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             className={displayError()}
             placeholder="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setError(null);
+            }}
           />
 
           <input
             className={displayError()}
             placeholder="Email"
+            type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null);
+            }}
           />
 
           <input
@@ -82,7 +100,10 @@ export default function Register() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError(null);
+            }}
           />
 
           <button
@@ -92,6 +113,16 @@ export default function Register() {
             {loading ? "Creating account..." : "Register"}
           </button>
         </form>
+
+        <p className="mt-4 text-sm text-center">
+          Already have an account?{" "}
+          <span
+            className="text-indigo-600 cursor-pointer underline"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
       </div>
     </div>
   );
