@@ -5,7 +5,7 @@ import Home from "./pages/HomePage";
 import Quiz from "./pages/QuizPage";
 import Login from "./pages/LoginPage";
 import Register from "./pages/RegisterPage";
-
+import Results from "./pages/ResultsPage";
 function App() {
   return (
     <AuthProvider>
@@ -20,6 +20,12 @@ function App() {
                 </ProtectedRoute>
               }
           />
+          <Route path="/results" element={
+              <ProtectedRoute>
+                  <Results />
+                </ProtectedRoute>
+              }
+         />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
