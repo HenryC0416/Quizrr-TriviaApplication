@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/Sidebar";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -51,37 +52,7 @@ export default function Results() {
     <div className="min-h-screen flex bg-gray-100">
 
       {/* SIDEBAR */}
-      <div className="w-64 bg-white shadow-md p-6 flex flex-col">
-        <h1 className="text-3xl font-bold text-indigo-600 mb-10">Quizrr</h1>
-
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={() => navigate("/")}
-            className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 transition font-medium"
-          >
-            Home
-          </button>
-
-          <button className="text-left px-4 py-3 rounded-lg bg-indigo-100 text-indigo-700 font-semibold">
-            Results
-          </button>
-        </div>
-
-        <div className="mt-auto">
-          {user && (
-             <div>
-              <p className="text-sm text-gray-500 mb-3"> Signed in as 
-                <span className="font-bold"> {user.username}</span>
-              </p>
-            
-              <button onClick={handleLogout} 
-                className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+      <Sidebar />
 
       {/* MAIN CONTENT */}
       <div className="flex-1 p-10">
