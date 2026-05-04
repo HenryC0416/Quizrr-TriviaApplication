@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-
+const API_URL = import.meta.env.VITE_API_URL;
 
 const categories = [
   { label: "Any category", value: "" },
@@ -20,6 +20,7 @@ const categories = [
 
 export default function Home() {
   const [category, setCategory] = useState("");
+  const [scores, setScores] = useState([]);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -32,6 +33,31 @@ export default function Home() {
     navigate("/login");
   };
 
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchScores = async () => {
+      try {
+        const res = await fetch(`${API_URL}/scores`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error(data.error);
+          return;
+        }
+
+        setScores(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchScores();
+  }, [user]);
 
   return (
     <div className="min-h-screen flex bg-gray-100">
@@ -116,6 +142,38 @@ export default function Home() {
           {user && (
             <div className="bg-white p-8 rounded-2xl shadow-md w-96">
               <h2 className="text-2xl font-bold mb-5 text-gray-800"> Recent Scores </h2>
+
+              {scores.length === 0 ? (
+                <p className="text-gray-500"> No scores yet</p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {scores.slice(0, 5).map((score) => (
+                    <div key={score.id}
+                      className="border border-gray-200 rounded-xl p-4 flex justify-between items-center"
+                    >
+                      <div>
+                        {score.category === "" ? (
+                          <p className="capitalize font-semibold text-gray-700">
+                            Any Category
+                          </p>
+                        ) : (
+                          <p className="capitalize font-semibold text-gray-700">
+                            {score.category.replaceAll("_", " ")}
+                          </p>
+                        )}
+
+                        <p className="text-xs text-gray-400">
+                          {new Date(score.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+
+                      <div className="text-xl font-bold text-indigo-600">
+                        {score.value}/10
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
