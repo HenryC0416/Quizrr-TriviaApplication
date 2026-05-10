@@ -1,6 +1,11 @@
 # Quizrr-TriviaApplication
 Quizrr is a browser-based trivia game built as a full-stack web application. Users can register, log in, choose a trivia category, answer timed multiple-choice questions, and save their quiz scores to their account.
 
+
+https://github.com/user-attachments/assets/9085ff0c-34bd-481e-b864-a03a448a86cb
+
+
+
 Features
 - User registration and login
 - Password hashing with bcrypt
@@ -141,4 +146,6 @@ Current MVP Flow
 Register/Login → Select Category → Play Quiz → Finish Quiz → Save Score → View Results
 ```
 What I Would Do Next: 
-
+- Fix play again functionlity to not rerender the same quiz
+- Implement leaderboard functionality
+- Add profile feature, displaying user information
